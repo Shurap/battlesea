@@ -1,0 +1,18 @@
+body {
+  background-color: black;
+}
+.fld {
+  background-image: url("/img/cell.jpg");
+  border: 2px solid black;
+  float: left;
+  height: 500px;
+  width: 500px;
+}
+
+.btn {
+  opacity: 0.5;
+  border: 2px solid black;
+  float: left;
+  height: 46px;
+  width: 46px;
+}
