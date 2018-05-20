@@ -7,7 +7,7 @@ newGame.onclick = function() {
 //  document.getElementById('test').appendChild(btn);
 
 }
-
+//git push
 
 function createGame(data) {
 
