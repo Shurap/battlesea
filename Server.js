@@ -3,13 +3,13 @@ var app = express();
 var path = require('path');
 
 //создание сервера
-var myServer = app.listen(7777, function () {
-  console.log('Сервер запущен и слушает порт 7777');
+var myServer = app.listen(process.env.PORT || 7777, function () {
+  console.log('Сервер запущен и слушает порт', process.env.PORT || 7777);
 });
 
 //передача страницы
 app.get('/', function (req, res) {
-  app.use(express.static('public'));
+  app.use(express.static(__dirname + '/public'));
   res.sendFile(__dirname + '/public/html/index.html');
 });
 
