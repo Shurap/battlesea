@@ -2,23 +2,29 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
-  <div id = "test" class="start">
-    <input id="userName" type="text" value="Имя" />
-    <input id="gameName" type="text" value="Название игры" />
-  </div>
-  <div class="start">
-    <input id="newGame" type="button" value="Новая игра" />
-    <input id="joinGame" type="button" value="Присоединиться" />
-  </div>
-
+    <div id="container" class="cr">
+        <div id="top" class="tp"></div>
+        <div id="right" class="rt"></div>
+        <div id="left" class="lt"></div>
+        <div id="middle" class="ml">
+            <div id="home" class="hm">
+                <input id="userName" type="text" value="Имя" />
+                <input id="gameName" type="text" value="Название игры" />
+            </div>
+            <div id="enemy" class="en">
+                <input id="newGame" type="button" value="Новая игра" />
+                <input id="joinGame" type="button" value="Присоединиться" />
+            </div>
+        </div>
+      <div id="down" class="dn"></div>
+    </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src = "../js/dataexchange.js"></script>
-
 </body>
 
 </html>
