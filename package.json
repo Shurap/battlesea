@@ -2,10 +2,10 @@
   "name": "battlesea",
   "version": "1.0.0",
   "description": "создание package.json и установка модулей\r npm init\r npm install --save express socket.io",
-  "main": "Server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./Server.js"
+    "start": "node ./server.js"
 },
   "author": "",
   "license": "ISC",
