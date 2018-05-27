@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var path = require('path');
+//var path = require('path');
 
 //создание сервера
 var myServer = app.listen(process.env.PORT || 7777, function () {
@@ -21,11 +21,19 @@ var io = require('socket.io').listen(myServer);
 io.sockets.on('connection', function (socket) {
   console.log('Подключился клиент ');
   socket.emit('hello', "Привет");
-
-
-  socket.on('name', function (data){
-    //socket.join(data);
-    console.log(data);
-  })
+  socket.on('name', servCreateNewGame);
+/*  socket.on('name', function (data){
+    socket.join(data.name);
+    console.log(data.name);
+  })*/
 });
 
+
+
+function servCreateNewGame(data) {
+    let lobby = data.game;
+    this.join(lobby);
+    console.log('Игрок' + data.name + 'cоздал игру с именем - ' + lobby);
+    let clients = io.sockets.adapter.rooms[lobby];
+    console.log(clients);
+}

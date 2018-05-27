@@ -33,17 +33,25 @@ body {
   margin: 0 0 10px 20.5%;
   width: 1000px;
 }
+.st {
+    background-image: url("../img/cell.jpg");
+    height: 440px;
+    width: 440px;
+    float: left;
+}
 .hm {
   background-image: url("../img/cell.jpg");
   height: 440px;
   width: 440px;
   float: left;
+  display: none;
 }
 .en {
   background-image: url("../img/cell.jpg");
   height: 440px;
   width: 440px;
   float: right;
+  display: none;
 }
 .dn {
   height: 80px;
