@@ -1,6 +1,7 @@
 btnNewGame.onclick = function() {
     let socket = io.connect();
-    socket.on('hello', createGame);
+    socket.on('connClient', createGame);
+    socket.on('terminal', getTerminal);
 }
 
 click = function() {
@@ -11,18 +12,22 @@ btnBorder = function() {
     this.style.borderColor = (this.style.borderColor === "red") ? "black" : "red";
 }
 
+function getTerminal(data) {
+    document.getElementById('terminal').value += "\n" + data;
+    document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
+}
+
 function createGame(data) {
 // скрыть старые, открыть новые элементы
     document.getElementById('userName').style.display = "none";
     document.getElementById('gameName').style.display = "none";
     document.getElementById('btnNewGame').style.display = "none";
-    document.getElementById('joinGame').style.display = "none";
+    document.getElementById('btnJoinGame').style.display = "none";
     document.getElementById('start').style.display = "none";
     document.getElementById('home').style.display = "block";
     document.getElementById('enemy').style.display = "block";
-    document.getElementById('top').innerText = "Расставьте свои корабли";
+    //document.getElementById('top').innerText = "Расставьте свои корабли";
 // передача имени и названия игры на сервер
-    console.log(data);
     this.emit('name', {name : userName.value, game : gameName.value});
 // создание поля из кнопок
     for (let i = 0; i < 10; i++) {
