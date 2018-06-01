@@ -19,33 +19,31 @@ var io = require('socket.io').listen(myServer);
 
 // слушает сокет
 io.sockets.on('connection', function (socket) {
-  console.log('Подключился клиент ');
+  console.log('Подключился клиент');
   socket.emit('connClient');
   socket.emit('terminal', "server> подключились к серверу");
   socket.on('name', servCreateNewGame);
 });
 
 
-
+// создание комнаты и подключение игроков
 function servCreateNewGame(data) {
   let lobbyName = data.game;
-  let lobby = io.sockets.adapter.rooms[lobbyName];
-// создание комнаты
+  let gamerName = data.name;
+  let lobby = this.adapter.rooms[lobbyName];
+
+  // создание комнаты
   if (lobby === undefined) {
   this.join(lobbyName);
-  this.emit('terminal', 'server> Игрок ' + data.name + ' cоздал игру с именем - ' + lobbyName);
-  let clients = io.sockets.adapter.rooms[lobbyName];
-  console.log(clients);
-  console.log(clients.length);
-  } else {
-// присоединение к комнате
+  lobby = this.adapter.rooms[lobbyName];
+  this.emit('terminal', 'server> Игрок ' + gamerName + ' cоздал игру с именем - ' + lobbyName);
+
+  // присоединение к комнате
+  } else if (lobby.length <= 1){
     this.join(lobbyName);
-    io.in(lobbyName).emit('terminal', 'server> Игрок ' + data.name + ' подключился к игре с именем - ' + lobbyName);
-    let clients = io.sockets.adapter.rooms[lobbyName];
-    console.log(clients);
-    console.log(clients.length);
+    lobby = this.adapter.rooms[lobbyName];
+    io.in(lobbyName).emit('terminal', 'server> Игрок ' + gamerName + ' подключился к игре с именем - ' + lobbyName);
+  } else {
+    this.emit('terminal', 'Уже подключились двое!');
   }
-
-  //console.log(lobby);
-
 }
