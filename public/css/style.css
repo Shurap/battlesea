@@ -40,14 +40,14 @@ body {
     float: left;
 }
 .hm {
-  background-image: url("../img/cell.jpg");
+  background-image: url("../img/map.jpg");
   height: 440px;
   width: 440px;
   float: left;
   display: none;
 }
 .en {
-  background-image: url("../img/cell.jpg");
+  background-image: url("../img/map.jpg");
   height: 440px;
   width: 440px;
   float: right;
@@ -61,7 +61,7 @@ body {
 
 
 /*.fld {
-  background-image: url("../img/cell.jpg");
+  background-image: url("../img/map.jpg");
   border: 2px solid black;
   float: left;
   height: 500px;
@@ -69,7 +69,7 @@ body {
 }*/
 
 .btn {
-  opacity: 0.5;
+  opacity: 0.8;
   border: 2px solid black;
   float: left;
   height: 40px;

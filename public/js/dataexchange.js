@@ -1,57 +1,126 @@
+var socket;
+var phaseGame;
+var name;
+
 btnNewGame.onclick = function() {
-    let socket = io.connect();
-    socket.on('connClient', createGame);
-    socket.on('terminal', getTerminal);
+  socket = io.connect();
+  socket.on('connClient', createGame);
+  socket.on('terminal', getTerminal);
+  socket.on('beginGame', beginGame);
+  socket.on('battle', battle);
+  socket.on('test', test);
 }
 
-click = function() {
-    alert('Клик на ' + this.id);
+// тест
+function test(data) {
+  console.log(data);
 }
 
-btnBorder = function() {
-    this.style.borderColor = (this.style.borderColor === "red") ? "black" : "red";
-}
-
-function getTerminal(data) {
-    document.getElementById('terminal').value += "\n" + data;
-    document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
-}
-
-function createGame(data) {
-// скрыть старые, открыть новые элементы
-    document.getElementById('userName').style.display = "none";
-    document.getElementById('gameName').style.display = "none";
-    document.getElementById('btnNewGame').style.display = "none";
-    document.getElementById('btnJoinGame').style.display = "none";
-    document.getElementById('start').style.display = "none";
-    document.getElementById('home').style.display = "block";
+// Кнопка "Готово"
+btnEnter.onclick = function () {
+// Сборка массива поля и отправка на сервер
+  if ((phaseGame === '1') && (verifArray('ship') === 5)) {
+    let array = create2DArray(10, 10);
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        let index = String(i) + String(j);
+        array[i][j] = document.getElementById(index);
+      }
+    }
+    socket.emit('field', {name : userName.value, arr : array});
+    getTerminal('> Готово! Ждем другого игрока...');
     document.getElementById('enemy').style.display = "block";
-    //document.getElementById('top').innerText = "Расставьте свои корабли";
-// передача имени и названия игры на сервер
-    this.emit('name', {name : userName.value, game : gameName.value});
-// создание поля из кнопок
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) {
-            let btnField = document.createElement('div');
-            btnField.className = 'btn';
-            //btnField.onclick = click;
-            btnField.addEventListener("click", click);
-            btnField.addEventListener("mouseenter", btnBorder);
-            btnField.addEventListener("mouseleave", btnBorder);
-            btnField.id = 'h' + String(i) + String(j);
-            document.getElementById('home').appendChild(btnField);
-        }
+    createBtnField('enemy');
+    phaseGame = '2';
+}
+}
+
+// Создание комнаты и подключение игроков
+function createGame(data) {
+  // скрыть старые, открыть новые элементы
+  document.getElementById('start').style.display = "none";
+  // передача имени и названия игры на сервер
+  this.emit('name', {name : userName.value, game : gameName.value});
+  phaseGame = '1';
+}
+
+// проверка на количество в кнопках
+function verifArray(data) {
+  let count = 0;
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      let index = String(i) + String(j);
+      if (document.getElementById(index).content === data) {
+        count ++;
+      }
     }
-    for (let i = 0; i < 10; i++) {
-        for (let j = 0; j < 10; j++) {
-            let btnField = document.createElement('div');
-            btnField.className = 'btn';
-            //btnField.onclick = click;
-            btnField.addEventListener("click", click);
-            btnField.addEventListener("mouseenter", btnBorder);
-            btnField.addEventListener("mouseleave", btnBorder);
-            btnField.id = 'e' + String(i) + String(j);
-            document.getElementById('enemy').appendChild(btnField);
-        }
+  }
+  return count;
+}
+
+
+// обработчик нажатия на кнопку поля
+function click() {
+  if (phaseGame === '1') {
+    if (verifArray('ship') < 5) {
+      this.style.backgroundImage = (this.style.backgroundImage === '') ? 'url("../img/ship.jpg")' : '';
+      this.content = (this.content === 'zero') ? 'ship' : 'zero';
+    } else {
+      this.style.backgroundImage = '';
+      this.content = 'zero';
     }
+  }
+  if (phaseGame === '2'){
+    alert('фаза 2')
+  }
+}
+
+// создание пустого двумерного массива
+function create2DArray(rows, columns) {
+  var x = new Array(rows);
+  for (var i = 0; i < rows; i++) {
+    x[i] = new Array(columns);
+  }
+  return x;
+}
+
+// изменения кнопки поля при наведении
+function btnBorder() {
+  this.style.borderColor = (this.style.borderColor === "red") ? "black" : "red";
+  if (phaseGame === '2') {
+    if (this.style.backgroundImage === '') {this.style.backgroundImage = 'url("../img/aim.png")'}
+    else if (this.style.backgroundImage === 'url("../img/ship.jpg")') {this.style.backgroundImage = 'url("../img/aimship.jpg")'}
+    else if (this.style.backgroundImage === 'url("../img/aimship.jpg")') {this.style.backgroundImage = 'url("../img/ship.jpg")'}
+    else {this.style.backgroundImage = ''}
+  }
+}
+
+// сообщение в терминал
+function getTerminal(data) {
+  document.getElementById('terminal').value += "\n" + data;
+  document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
+}
+
+// создание поля кнопок
+function createBtnField(divId) {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      let btnField = document.createElement('div');
+      btnField.className = 'btn';
+      btnField.addEventListener("click", click);
+      btnField.addEventListener("mouseenter", btnBorder);
+      btnField.addEventListener("mouseleave", btnBorder);
+      btnField.id = String(i) + String(j);
+      btnField.content = 'zero';
+      btnField.adress = btnField.id;
+      document.getElementById(divId).appendChild(btnField);
+    }
+  }
+}
+
+function beginGame(){
+  // скрыть старые, открыть новые элементы
+  document.getElementById('home').style.display = "block";
+  createBtnField('home');
+  getTerminal('> Расставьте свои корабли');
 }
