@@ -1,6 +1,8 @@
-var socket;
-var phaseGame;
-var name;
+let socket;
+let phaseGame;
+let name;
+let postId;
+let btnPicture;
 
 btnNewGame.onclick = function() {
   socket = io.connect();
@@ -32,7 +34,9 @@ btnEnter.onclick = function () {
     document.getElementById('enemy').style.display = "block";
     createBtnField('enemy');
     phaseGame = '2';
-}
+  } else if (phaseGame = '2') {
+    socket.emit('shoot', postId);
+  }
 }
 
 // Создание комнаты и подключение игроков
@@ -58,9 +62,9 @@ function verifArray(data) {
   return count;
 }
 
-
 // обработчик нажатия на кнопку поля
 function click() {
+  //расстановка кораблей
   if (phaseGame === '1') {
     if (verifArray('ship') < 5) {
       this.style.backgroundImage = (this.style.backgroundImage === '') ? 'url("../img/ship.jpg")' : '';
@@ -70,15 +74,19 @@ function click() {
       this.content = 'zero';
     }
   }
-  if (phaseGame === '2'){
-    alert('фаза 2')
+  //установка прицела
+  if ((phaseGame === '2') && (this.allowpress === true)) {
+    //this.textContent = 'O';
+      this.style.backgroundImage = 'url("../img/aimblack.png")';
+    postId = this.id;
   }
+  btnPicture = this.style.backgroundImage;
 }
 
 // создание пустого двумерного массива
 function create2DArray(rows, columns) {
-  var x = new Array(rows);
-  for (var i = 0; i < rows; i++) {
+  let x = new Array(rows);
+  for (let i = 0; i < rows; i++) {
     x[i] = new Array(columns);
   }
   return x;
@@ -86,13 +94,17 @@ function create2DArray(rows, columns) {
 
 // изменения кнопки поля при наведении
 function btnBorder() {
-  this.style.borderColor = (this.style.borderColor === "red") ? "black" : "red";
-  if (phaseGame === '2') {
+  btnPicture = this.style.backgroundImage;
+  this.style.borderColor = "red";
+  if ((phaseGame === '2') && (this.allowpress === true)) {
     if (this.style.backgroundImage === '') {this.style.backgroundImage = 'url("../img/aim.png")'}
     else if (this.style.backgroundImage === 'url("../img/ship.jpg")') {this.style.backgroundImage = 'url("../img/aimship.jpg")'}
-    else if (this.style.backgroundImage === 'url("../img/aimship.jpg")') {this.style.backgroundImage = 'url("../img/ship.jpg")'}
-    else {this.style.backgroundImage = ''}
   }
+}
+
+function btnBackPicture() {
+  this.style.borderColor = "black";
+  this.style.backgroundImage = btnPicture;
 }
 
 // сообщение в терминал
@@ -109,10 +121,11 @@ function createBtnField(divId) {
       btnField.className = 'btn';
       btnField.addEventListener("click", click);
       btnField.addEventListener("mouseenter", btnBorder);
-      btnField.addEventListener("mouseleave", btnBorder);
+      btnField.addEventListener("mouseleave", btnBackPicture);
       btnField.id = String(i) + String(j);
       btnField.content = 'zero';
-      btnField.adress = btnField.id;
+      //btnField.adress = btnField.id;
+      btnField.allowpress = (divId === 'enemy') ? true : false;
       document.getElementById(divId).appendChild(btnField);
     }
   }
