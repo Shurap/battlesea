@@ -41,10 +41,10 @@ function createBtnField(divId) {
       btnField.addEventListener("mouseenter", btnBorder);
       btnField.addEventListener("mouseleave", btnBackPicture);
       btnField.id = divId.substr(0, 1) + String(i) + String(j);
-      btnField.parent = divId.substr(0, 1);
+      //btnField.parent = divId.substr(0, 1);
       btnField.content = 'zero';
       btnField.adress = btnField.id;
-      btnField.allowpress = (divId === 'enemy') ? true : false;
+      //btnField.allowpress = (divId === 'enemy') ? true : false;
       document.getElementById(divId).appendChild(btnField);
     }
   }
@@ -63,15 +63,18 @@ function click() {
     }
   }
 //Phase two - set aim on the field 'enemy'
-  if ((phaseGame === '2') && (this.allowpress === true)) {
+  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
     //this.textContent = 'O';
+    if (verifArray('aim', 'enemy') != 0) {
+      document.getElementById(postId).style.backgroundImage = '';
+    }
     this.style.backgroundImage = 'url("../img/aimblack.png")';
-
-    if (postId) {document.getElementById(postId).style.backgroundImage = 'url("../img/ship.jpg")';}
-    //console.log('this ', this);
+    this.content = 'aim';
     postId = this.id;
   }
   btnPicture = this.style.backgroundImage;
+  console.log(postId || this.id, ' ', btnPicture);
+
 }
 
 // Verification array of buttons for count... (what count, where find)
@@ -123,7 +126,7 @@ function create2DArray(rows, columns) {
 function btnBorder() {
   btnPicture = this.style.backgroundImage;
   this.style.borderColor = "red";
-  if ((phaseGame === '2') && (this.allowpress === true)) {
+  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
     if (this.style.backgroundImage === '') {this.style.backgroundImage = 'url("../img/aim.png")'}
     else if (this.style.backgroundImage === 'url("../img/ship.jpg")') {this.style.backgroundImage = 'url("../img/aimship.jpg")'}
   }
