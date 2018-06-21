@@ -2,6 +2,7 @@ let express = require('express');
 let app = express();
 let objGamer1 = {};
 let objGamer2 = {};
+var countShips = require('./countships');
 
 //Create server
 let myServer = app.listen(process.env.PORT || 7777, function () {
@@ -94,7 +95,7 @@ function battle(data, target) {
 
   if (target[coordX][coordY].content === 'ship') {
 
-    return numberShips(coordX, coordY, target);
+    return countShips.numberShips(coordX, coordY, target);
     //return 'hit';
   } else {
     return 'fail';
@@ -102,7 +103,7 @@ function battle(data, target) {
 
 }
 
-function numberShips(coordX, coordY, target) {
+/*function numberShips(coordX, coordY, target) {
   let count = 0;
 //vertical
   for (let i = 0; i < 10; i++) {
@@ -145,4 +146,4 @@ function numberShips(coordX, coordY, target) {
     if (target[i][j].content === 'ship') count++;
   }
     return count;
-}
+}*/
