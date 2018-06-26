@@ -2,7 +2,7 @@ let express = require('express');
 let app = express();
 let objGamer1 = {};
 let objGamer2 = {};
-var countShips = require('./countships');
+let countShips = require('./countships');
 
 //Create server
 let myServer = app.listen(process.env.PORT || 7777, function () {
@@ -21,12 +21,11 @@ let io = require('socket.io').listen(myServer);
 //Listen client
 io.on('connection', function (socket) {
 //io.sockets.on('connection', function (socket) {
-  //console.log('Подключился клиент');
   socket.emit('connClient');
   socket.emit('terminal', "server> подключились к серверу");
   socket.on('name', servCreateNewGame);
   socket.on('field', servBeginGame);
-  socket.on('shoot', servVerifShoot);
+  socket.on('shoot', servSelectClient);
 });
 
 //Create room and connect gamers. Create objGamer with name, id
@@ -39,15 +38,11 @@ function servCreateNewGame(data) {
   this.join(lobbyName);
   objGamer1['name'] = data.name;// .name
   objGamer1['id'] = this.id;
-  console.log('1 ', this.id);
 //Connect to room 2nd
   } else if (lobby.length <= 1){
     this.join(lobbyName);
     objGamer2['name'] = data.name;
     objGamer2['id'] = this.id;
-
-    console.log('2 ', this.id);
-    console.log('3 ', lobby);
 
     io.in(lobbyName).emit('terminal', 'server> Игрок ' + gamerName + ' подключился к игре с именем - ' + lobbyName);
     io.in(lobbyName).emit('beginGame');
@@ -64,86 +59,60 @@ function servBeginGame(data) {
   } else if (this.id === objGamer2.id) {
     objGamer2['array'] = data.arr;
   }
-  if (objGamer1.array !== undefined) {
-    console.log('4.1 ', objGamer1.name, objGamer1.id, objGamer1.array[0][0]);
-    //this.broadcast.emit('terminal', 'server> Игрок ' + objGamer1.name + ' расставил свои корабли');
-
-  }
-  if (objGamer2.array !== undefined) {
-    console.log('4.2 ', objGamer2.name, objGamer2.id, objGamer2.array[0][0]);
-    //this.broadcast.emit('terminal', 'server> Игрок ' + objGamer2.name + ' расставил свои корабли');
-  }
-
-    //this.emit('battle');
-
-    //this.broadcast.emit('terminal', 'игрок расставил корабли');
 }
 
-function servVerifShoot(data) {
-  console.log ('shoot ', this.id, ' ', data);
+function servSelectClient(data) {
+  let result;
   let postTo = (this.id === objGamer1.id) ? objGamer2.id : objGamer1.id;
-  let target = (postTo === objGamer1.id) ? objGamer1.array : objGamer2.array;
-  let result = battle(data, target);
+  let getFrom = (this.id === objGamer1.id) ? objGamer1.id : objGamer2.id;
 
-  io.sockets.connected[postTo].emit('terminal', result);
+  if (postTo === objGamer1.id) result = defineResultShot(data, objGamer1.array);
+  if (postTo === objGamer2.id) result = defineResultShot(data, objGamer2.array);
 
+  io.sockets.connected[postTo].emit('terminal', data);
+  io.sockets.connected[getFrom].emit('terminal', result);
+  io.sockets.connected[getFrom].emit('checkShot', result);
+  console.log('1) ', countShipsOnField(objGamer1.array));
+  console.log('2) ', countShipsOnField(objGamer2.array));
 }
 
-function battle(data, target) {
+function defineResultShot(data, target) {
   let coordX = data.substr(0, 1);
   let coordY = data.substr(1, 1);
 
-  if (target[coordX][coordY].content === 'ship') {
+  // hit to ship
+  console.log(coordX, coordY);
 
-    return countShips.numberShips(coordX, coordY, target);
-    //return 'hit';
-  } else {
-    return 'fail';
+  if (target[coordX][coordY].content === 'ship') {
+    target[coordX][coordY].content = 'wreck';
+    return {inTarget : 'hit',
+            countShips : countShips.numberShips(coordX, coordY, target) + 1,
+             coord : data};
+    //return countShips.numberShips(coordX, coordY, target) + 1;
   }
 
+  if (target[coordX][coordY].content === 'zero') {
+    return countShips.numberShips(coordX, coordY, target)
+  }
 }
 
-/*function numberShips(coordX, coordY, target) {
-  let count = 0;
-//vertical
-  for (let i = 0; i < 10; i++) {
-    if (i !== +coordX) {
-      if (target[i][coordY].content === 'ship') count++;
-    }
-  }
-//horizontal
-  for (let i = 0; i < 10; i++) {
-    if (i !== +coordY) {
-      if (target[coordX][i].content === 'ship') count++;
-    }
-  }
-  let i = coordX;
-  let j = coordY;
-  while ((i < 9) && (j < 9)) {
-    i++;
-    j++;
-    if (target[i][j].content === 'ship') count++;
-  }
-  i = coordX;
-  j = coordY;
-  while ((i > 0) && (j > 0)) {
-    i--;
-    j--;
-    if (target[i][j].content === 'ship') count++;
-  }
-  i = coordX;
-  j = coordY;
-  while ((i < 9) && (j > 0)) {
-    i++;
-    j--;
-    if (target[i][j].content === 'ship') count++;
-  }
-  i = coordX;
-  j = coordY;
-  while ((i > 0) && (j < 9)) {
-    i--;
-    j++;
-    if (target[i][j].content === 'ship') count++;
-  }
+function countShipsOnField(data) {
+    let result = data.reduce(function(count, current) {
+
+    count = count + current.reduce(function(count1, current1){
+      if (current1.content === 'ship') count1++;
+      return count1;
+    }, 0);
+
     return count;
-}*/
+  }, 0);
+  return result;
+
+/*  let count = 0;
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      if (data[i][j].content === 'ship') count ++;
+    }
+  }
+  return count;*/
+}

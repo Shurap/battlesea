@@ -1,7 +1,7 @@
 let socket;
 let phaseGame;
 let name;//---------------?
-let postId;
+let lastId;
 let btnPicture;
 // Connect and listen server
 btnNewGame.onclick = function() {
@@ -9,7 +9,8 @@ btnNewGame.onclick = function() {
   socket.on('connClient', createGame);
   socket.on('terminal', getTerminal);
   socket.on('beginGame', beginGame);
-  socket.on('battle', battle);
+  socket.on('checkShot', checkShot);
+//  socket.on('battle', battle);
   socket.on('test', test);
 };
 
@@ -53,29 +54,41 @@ function createBtnField(divId) {
 // Handler event - press button of field
 function click() {
 //Phase one - arrange ships on the field 'home'
+  let self = this;
   if (phaseGame === '1') {
-    if (verifArray('ship', 'home') < 5) {
-      this.style.backgroundImage = (this.style.backgroundImage === '') ? 'url("../img/ship.jpg")' : '';
-      this.content = (this.content === 'zero') ? 'ship' : 'zero';
-    } else {
-      this.style.backgroundImage = '';
-      this.content = 'zero';
-    }
+    setPictureOnButtonHomeField(self);
   }
 //Phase two - set aim on the field 'enemy'
   if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
-    //this.textContent = 'O';
-    if (postId) {
-      document.getElementById(postId).style.backgroundImage = '';
-      document.getElementById(postId).content = 'zero';
-    }
-    this.style.backgroundImage = 'url("../img/aimblack.png")';
-    postId = this.id;
-  }
-  btnPicture = this.style.backgroundImage;
-  //console.log(postId || this.id, ' ', btnPicture, verifArray('aim', 'enemy'));
-
+    setPictureOnButtonEnemyField(self);
 }
+
+function setPictureOnButtonHomeField(self) {
+  if (verifArray('ship', 'home') < 5) {
+    self.style.backgroundImage = (self.style.backgroundImage === '') ? 'url("../img/ship.jpg")' : '';
+    self.content = (self.content === 'zero') ? 'ship' : 'zero';
+  } else {
+//if stay 5 ships and 1 ships need remove
+    self.style.backgroundImage = '';
+    self.content = 'zero';
+  }
+}
+
+function setPictureOnButtonEnemyField(self) {
+  if (lastId) {
+    document.getElementById(lastId).style.backgroundImage = '';
+    document.getElementById(lastId).content = 'zero';
+  }
+  self.style.backgroundImage = 'url("../img/aimblack.png")';
+  lastId = self.id;
+}
+btnPicture = self.style.backgroundImage;
+}
+
+
+
+
+
 
 // Verification array of buttons for count... (what count, where find)
 function verifArray(data, parentDiv) {
@@ -110,7 +123,7 @@ btnEnter.onclick = function () {
     phaseGame = '2';
 // Send to server shoot
   } else if (phaseGame === '2') {
-    socket.emit('shoot', postId.substr(1,2));
+    socket.emit('shoot', lastId.substr(1,2));
   }
 };
 
@@ -145,7 +158,15 @@ function getTerminal(data) {
   document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
 }
 
-function battle(){}
+function checkShot(data) {
+  document.getElementById('e' + data.coord).innerText = data.countShips;
+  if (data.inTarget = 'hit') {
+    document.getElementById('e' + data.coord).style.backgroundImage = 'url("../img/wreckship.png")';
+  }
+
+}
+
+//function battle(){}
 
 // тест
 function test(data) {
