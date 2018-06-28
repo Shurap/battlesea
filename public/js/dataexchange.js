@@ -2,15 +2,14 @@ let socket;
 let phaseGame;
 let name;//---------------?
 let lastId;
-let btnPicture;
+
 // Connect and listen server
 btnNewGame.onclick = function() {
   socket = io.connect();
   socket.on('connClient', createGame);
   socket.on('terminal', getTerminal);
   socket.on('beginGame', beginGame);
-  socket.on('checkShot', checkShot);
-//  socket.on('battle', battle);
+  socket.on('checkShot', resultOfShot);
   socket.on('test', test);
 };
 
@@ -20,7 +19,6 @@ function createGame(data) {
   document.getElementById('start').style.display = "none";
 // Send name and title of game to server
   this.emit('name', {name : userName.value, game : gameName.value});
-  //phaseGame = '1';
 }
 
 //Begin game (Phase 1)
@@ -32,41 +30,60 @@ function beginGame(){
   phaseGame = '1';
 }
 
+// message to terminal
+function getTerminal(data) {
+  document.getElementById('terminal').value += "\n" + data;
+  document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
+}
+
 // Create field of buttons
 function createBtnField(divId) {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       let btnField = document.createElement('div');
       btnField.className = 'btn';
-      btnField.addEventListener("click", click);
-      btnField.addEventListener("mouseenter", btnBorder);
-      btnField.addEventListener("mouseleave", btnBackPicture);
+      btnField.addEventListener("click", clickOnButtonField);
+      btnField.addEventListener("mouseenter", enterMouseOnButtonField);
+      btnField.addEventListener("mouseleave", leaveMouseOnButtonField);
       btnField.id = divId.substr(0, 1) + String(i) + String(j);
-      //btnField.parent = divId.substr(0, 1);
       btnField.content = 'zero';
       btnField.adress = btnField.id;
-      //btnField.allowpress = (divId === 'enemy') ? true : false;
       document.getElementById(divId).appendChild(btnField);
     }
   }
 }
 
-// Handler event - press button of field
-function click() {
-//Phase one - arrange ships on the field 'home'
+function clickOnButtonField() {
+//Phase one - set ships on the field 'home'
   let self = this;
   if (phaseGame === '1') {
     setPictureOnButtonHomeField(self);
   }
 //Phase two - set aim on the field 'enemy'
-  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
+  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e') && (this.textContent === '')) {
     setPictureOnButtonEnemyField(self);
+  }
+}
+
+function enterMouseOnButtonField() {
+  this.style.borderColor = "red";
+  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
+    if (this.style.backgroundImage === '') {this.style.backgroundImage = 'url("../img/aim.png")'}
+  }
+}
+
+function leaveMouseOnButtonField() {
+  this.style.borderColor = "black";
+  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
+    if (this.style.backgroundImage === 'url("../img/aim.png")') this.style.backgroundImage = '';
+  }
 }
 
 function setPictureOnButtonHomeField(self) {
   if (verifArray('ship', 'home') < 5) {
-    self.style.backgroundImage = (self.style.backgroundImage === '') ? 'url("../img/ship.jpg")' : '';
+    self.style.backgroundImage = (self.style.backgroundImage === '') ? 'url("../img/ship.png")' : '';
     self.content = (self.content === 'zero') ? 'ship' : 'zero';
+    //btnPicture = (btnPicture = 'url("../img/ship.png")') ? 'url("../img/ship.png")' : '';
   } else {
 //if stay 5 ships and 1 ships need remove
     self.style.backgroundImage = '';
@@ -76,19 +93,13 @@ function setPictureOnButtonHomeField(self) {
 
 function setPictureOnButtonEnemyField(self) {
   if (lastId) {
-    document.getElementById(lastId).style.backgroundImage = '';
-    document.getElementById(lastId).content = 'zero';
+    if (document.getElementById(lastId).style.backgroundImage === 'url("../img/aimblack.png")') {
+      document.getElementById(lastId).style.backgroundImage = '';
+    }
   }
   self.style.backgroundImage = 'url("../img/aimblack.png")';
   lastId = self.id;
 }
-btnPicture = self.style.backgroundImage;
-}
-
-
-
-
-
 
 // Verification array of buttons for count... (what count, where find)
 function verifArray(data, parentDiv) {
@@ -104,9 +115,9 @@ function verifArray(data, parentDiv) {
   return count;
 }
 
-// Press button 'Enter'
+// Press button 'Enter', send to server
 btnEnter.onclick = function () {
-// Create array button and send to server
+// Create array buttons and send to server
   if ((phaseGame === '1') && (verifArray('ship', 'home') === 5)) {
     let array = create2DArray(10, 10);
     for (let i = 0; i < 10; i++) {
@@ -136,37 +147,17 @@ function create2DArray(rows, columns) {
   return x;
 }
 
-// Change picture (phase 2) and border of buttons
-function btnBorder() {
-  btnPicture = this.style.backgroundImage;
-  this.style.borderColor = "red";
-  if ((phaseGame === '2') && (this.adress.substr(0, 1) === 'e')) {
-    if (this.style.backgroundImage === '') {this.style.backgroundImage = 'url("../img/aim.png")'}
-    else if (this.style.backgroundImage === 'url("../img/ship.jpg")') {this.style.backgroundImage = 'url("../img/aimship.jpg")'}
+function resultOfShot(data) {
+  if (data.setOnField === 'e') {
+    document.getElementById(data.setOnField + data.coord).textContent = data.countShips;
+  }
+  if (data.inTarget === 'hit') {
+    document.getElementById(data.setOnField + data.coord).style.backgroundImage = 'url("../img/wreckship.png")';
+  }
+  if (data.inTarget === 'fail') {
+    document.getElementById(data.setOnField + data.coord).style.backgroundImage = 'url("../img/water.png")';
   }
 }
-
-// Change back picture (phase 2) and border of buttons
-function btnBackPicture() {
-  this.style.borderColor = "black";
-  this.style.backgroundImage = btnPicture;
-}
-
-// message to terminal
-function getTerminal(data) {
-  document.getElementById('terminal').value += "\n" + data;
-  document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
-}
-
-function checkShot(data) {
-  document.getElementById('e' + data.coord).innerText = data.countShips;
-  if (data.inTarget = 'hit') {
-    document.getElementById('e' + data.coord).style.backgroundImage = 'url("../img/wreckship.png")';
-  }
-
-}
-
-//function battle(){}
 
 // тест
 function test(data) {

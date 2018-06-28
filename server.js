@@ -63,17 +63,14 @@ function servBeginGame(data) {
 
 function servSelectClient(data) {
   let result;
-  let postTo = (this.id === objGamer1.id) ? objGamer2.id : objGamer1.id;
-  let getFrom = (this.id === objGamer1.id) ? objGamer1.id : objGamer2.id;
+  let gamerTarget = (this.id === objGamer1.id) ? objGamer2 : objGamer1;
+  let gamerShooter = (this.id === objGamer1.id) ? objGamer1 : objGamer2;
 
-  if (postTo === objGamer1.id) result = defineResultShot(data, objGamer1.array);
-  if (postTo === objGamer2.id) result = defineResultShot(data, objGamer2.array);
-
-  io.sockets.connected[postTo].emit('terminal', data);
-  io.sockets.connected[getFrom].emit('terminal', result);
-  io.sockets.connected[getFrom].emit('checkShot', result);
-  console.log('1) ', countShipsOnField(objGamer1.array));
-  console.log('2) ', countShipsOnField(objGamer2.array));
+  result = defineResultShot(data, gamerTarget.array);
+  result.setOnField = 'e';
+  io.sockets.connected[gamerShooter.id].emit('checkShot', result);
+  result.setOnField = 'h';
+  io.sockets.connected[gamerTarget.id].emit('checkShot', result);
 }
 
 function defineResultShot(data, target) {
@@ -81,18 +78,19 @@ function defineResultShot(data, target) {
   let coordY = data.substr(1, 1);
 
   // hit to ship
-  console.log(coordX, coordY);
 
   if (target[coordX][coordY].content === 'ship') {
     target[coordX][coordY].content = 'wreck';
     return {inTarget : 'hit',
             countShips : countShips.numberShips(coordX, coordY, target) + 1,
-             coord : data};
-    //return countShips.numberShips(coordX, coordY, target) + 1;
+            coord : data,
+            setOnField : ''};
   }
-
   if (target[coordX][coordY].content === 'zero') {
-    return countShips.numberShips(coordX, coordY, target)
+    return {inTarget : 'fail',
+      countShips : countShips.numberShips(coordX, coordY, target),
+      coord : data,
+      setOnField : ''};
   }
 }
 
