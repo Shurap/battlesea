@@ -6,7 +6,7 @@ let countShips = require('./countships');
 
 //Create server
 let myServer = app.listen(process.env.PORT || 7777, function () {
-  console.log('Сервер запущен и слушает порт', process.env.PORT || 7777);
+  //console.log('Сервер запущен и слушает порт', process.env.PORT || 7777);
 });
 
 //Send site to client
@@ -69,18 +69,24 @@ function servSelectClient(data) {
   result = defineResultShot(data, gamerTarget.array);
   result.setOnField = 'e';
   io.sockets.connected[gamerShooter.id].emit('checkShot', result);
+  console.log('Shooter - ', result);
   result.setOnField = 'h';
   io.sockets.connected[gamerTarget.id].emit('checkShot', result);
+  console.log('Target - ', result);
 }
 
 function defineResultShot(data, target) {
   let coordX = data.substr(0, 1);
   let coordY = data.substr(1, 1);
 
-  // hit to ship
-
   if (target[coordX][coordY].content === 'ship') {
     target[coordX][coordY].content = 'wreck';
+    if (countShipsOnField(target) === 0) {
+      return {inTarget : 'win',
+        countShips : countShips.numberShips(coordX, coordY, target) + 1,
+        coord : data,
+        setOnField : ''};
+    }
     return {inTarget : 'hit',
             countShips : countShips.numberShips(coordX, coordY, target) + 1,
             coord : data,
@@ -95,7 +101,7 @@ function defineResultShot(data, target) {
 }
 
 function countShipsOnField(data) {
-    let result = data.reduce(function(count, current) {
+    return data.reduce(function(count, current) {
 
     count = count + current.reduce(function(count1, current1){
       if (current1.content === 'ship') count1++;
@@ -104,13 +110,4 @@ function countShipsOnField(data) {
 
     return count;
   }, 0);
-  return result;
-
-/*  let count = 0;
-  for (let i = 0; i < 10; i++) {
-    for (let j = 0; j < 10; j++) {
-      if (data[i][j].content === 'ship') count ++;
-    }
-  }
-  return count;*/
 }

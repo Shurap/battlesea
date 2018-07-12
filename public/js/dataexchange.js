@@ -1,20 +1,27 @@
 let socket;
-let phaseGame;
+let phaseGame = '0';
 let name;//---------------?
 let lastId;
 
-// Connect and listen server
-btnNewGame.onclick = function() {
+function connectAndListenServer() {
   socket = io.connect();
   socket.on('connClient', createGame);
   socket.on('terminal', getTerminal);
   socket.on('beginGame', beginGame);
   socket.on('checkShot', resultOfShot);
-  socket.on('test', test);
-};
+}
+
+// Connect and listen server
+/*btnNewGame.onclick = function() {
+  socket = io.connect();
+  socket.on('connClient', createGame);
+  socket.on('terminal', getTerminal);
+  socket.on('beginGame', beginGame);
+  socket.on('checkShot', resultOfShot);
+};*/
 
 // Create game and player connection
-function createGame(data) {
+function createGame() {
 // Hide old elements and show new elements
   document.getElementById('start').style.display = "none";
 // Send name and title of game to server
@@ -89,6 +96,13 @@ function setPictureOnButtonHomeField(self) {
     self.style.backgroundImage = '';
     self.content = 'zero';
   }
+
+ /* if (verifArray('ship', 'home') === 5) {
+    document.getElementById('btnEnter').style.display = "block";
+  } else {
+    document.getElementById('btnEnter').style.display = "none";
+  }*/
+
 }
 
 function setPictureOnButtonEnemyField(self) {
@@ -118,7 +132,10 @@ function verifArray(data, parentDiv) {
 // Press button 'Enter', send to server
 btnEnter.onclick = function () {
 // Create array buttons and send to server
-  if ((phaseGame === '1') && (verifArray('ship', 'home') === 5)) {
+
+  if (phaseGame === '0') {
+    connectAndListenServer()
+  } else if ((phaseGame === '1') && (verifArray('ship', 'home') === 5)) {
     let array = create2DArray(10, 10);
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
@@ -133,7 +150,7 @@ btnEnter.onclick = function () {
     createBtnField('enemy');
     phaseGame = '2';
 // Send to server shoot
-  } else if (phaseGame === '2') {
+  } else if ((phaseGame === '2') && (document.getElementById('btnEnter').style.backgroundColor !== '#FF7F00')) {
     socket.emit('shoot', lastId.substr(1,2));
   }
 };
@@ -150,16 +167,19 @@ function create2DArray(rows, columns) {
 function resultOfShot(data) {
   if (data.setOnField === 'e') {
     document.getElementById(data.setOnField + data.coord).textContent = data.countShips;
+    document.getElementById('btnEnter').style.backgroundColor = '#FF7F00';
+    document.getElementById('btnEnter').value = 'Ход соперника...';
   }
-  if (data.inTarget === 'hit') {
+  if (data.setOnField === 'h') {
+    document.getElementById('btnEnter').style.backgroundColor = '#00BB3F';
+  }
+
+  if ((data.inTarget === 'hit') || (data.inTarget === 'win')) {
     document.getElementById(data.setOnField + data.coord).style.backgroundImage = 'url("../img/wreckship.png")';
   }
   if (data.inTarget === 'fail') {
     document.getElementById(data.setOnField + data.coord).style.backgroundImage = 'url("../img/water.png")';
   }
-}
-
-// тест
-function test(data) {
-  console.log(data);
+  if ((data.setOnField === 'e') && (data.inTarget === 'win')) alert ('WIN!!!');
+  if ((data.setOnField === 'h') && (data.inTarget === 'win')) alert ('LOST...');
 }
