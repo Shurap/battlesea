@@ -1,3 +1,5 @@
+// Make verification when 'wait opponent'. Button not press.
+
 let socket;
 let phaseGame = '0';
 let name;//---------------?
@@ -11,19 +13,14 @@ function connectAndListenServer() {
   socket.on('checkShot', resultOfShot);
 }
 
-// Connect and listen server
-/*btnNewGame.onclick = function() {
-  socket = io.connect();
-  socket.on('connClient', createGame);
-  socket.on('terminal', getTerminal);
-  socket.on('beginGame', beginGame);
-  socket.on('checkShot', resultOfShot);
-};*/
-
 // Create game and player connection
 function createGame() {
 // Hide old elements and show new elements
-  document.getElementById('start').style.display = "none";
+  //document.getElementById('start').style.display = "none";
+  document.getElementById('userName').style.display = "none";
+  document.getElementById('gameName').style.display = "none";
+  document.getElementById('btnEnter').value = 'Wait opponent...';
+
 // Send name and title of game to server
   this.emit('name', {name : userName.value, game : gameName.value});
 }
@@ -31,7 +28,9 @@ function createGame() {
 //Begin game (Phase 1)
 function beginGame(){
   // Hide old elements and show new elements
+  document.getElementById('start').style.display = "none";
   document.getElementById('home').style.display = "block";
+  document.getElementById('btnEnter').value = 'Set 5 ships';
   createBtnField('home');
   getTerminal('> Расставьте свои корабли');
   phaseGame = '1';
@@ -90,19 +89,14 @@ function setPictureOnButtonHomeField(self) {
   if (verifArray('ship', 'home') < 5) {
     self.style.backgroundImage = (self.style.backgroundImage === '') ? 'url("../img/ship.png")' : '';
     self.content = (self.content === 'zero') ? 'ship' : 'zero';
-    //btnPicture = (btnPicture = 'url("../img/ship.png")') ? 'url("../img/ship.png")' : '';
   } else {
 //if stay 5 ships and 1 ships need remove
     self.style.backgroundImage = '';
     self.content = 'zero';
   }
-
- /* if (verifArray('ship', 'home') === 5) {
-    document.getElementById('btnEnter').style.display = "block";
-  } else {
-    document.getElementById('btnEnter').style.display = "none";
-  }*/
-
+  document.getElementById('btnEnter').value = (verifArray('ship', 'home') < 5) ?
+    'Set ' + (5 - verifArray('ship', 'home')) + ' ships' :
+    'Press to begin battle!!!';
 }
 
 function setPictureOnButtonEnemyField(self) {
@@ -129,12 +123,13 @@ function verifArray(data, parentDiv) {
   return count;
 }
 
-// Press button 'Enter', send to server
+// Press button 'Enter'
 btnEnter.onclick = function () {
-// Create array buttons and send to server
-
+// connecting to server
   if (phaseGame === '0') {
-    connectAndListenServer()
+    connectAndListenServer();
+    document.getElementById('btnEnter').value = 'Set 5 ships';
+// Create array buttons and send to server
   } else if ((phaseGame === '1') && (verifArray('ship', 'home') === 5)) {
     let array = create2DArray(10, 10);
     for (let i = 0; i < 10; i++) {
