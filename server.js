@@ -22,7 +22,7 @@ let io = require('socket.io').listen(myServer);
 io.on('connection', function (socket) {
 //io.sockets.on('connection', function (socket) {
   socket.emit('connClient');
-  socket.emit('terminal', "server> подключились к серверу");
+  socket.emit('terminal', "server> подключились к серверу, ждем подключения второго игрока...");
   socket.on('name', servCreateNewGame);
   socket.on('field', servBeginGame);
   socket.on('shoot', servSelectClient);
@@ -44,7 +44,11 @@ function servCreateNewGame(data) {
     objGamer2['name'] = data.name;
     objGamer2['id'] = this.id;
 
-    io.in(lobbyName).emit('terminal', 'server> Игрок ' + gamerName + ' подключился к игре с именем - ' + lobbyName);
+    //io.in(lobbyName).emit('terminal', 'server> Игрок ' + gamerName + ' подключился к игре с именем - ' + lobbyName);
+    io.sockets.connected[objGamer2.id].emit('terminal', 'server> игрок ' + objGamer1.name +
+                                            ' подключился к игре с названием ' + lobbyName);
+    io.sockets.connected[objGamer1.id].emit('terminal', 'server> игрок ' + objGamer2.name +
+                                            ' подключился к игре с названием ' + lobbyName);
     io.in(lobbyName).emit('beginGame');
 //If room is full
   } else {
@@ -55,9 +59,14 @@ function servCreateNewGame(data) {
 //Write to objGamer array
 function servBeginGame(data) {
   if (this.id === objGamer1.id) {
-    objGamer1['array'] = data.arr;
+    objGamer1['array'] = data;
+    io.sockets.connected[objGamer2.id].emit('terminal', 'server> игрок ' + objGamer1.name + ' готов к бою!');
   } else if (this.id === objGamer2.id) {
-    objGamer2['array'] = data.arr;
+    objGamer2['array'] = data;
+    io.sockets.connected[objGamer1.id].emit('terminal', 'server> игрок ' + objGamer2.name + ' готов к бою!');
+  }
+  if ((objGamer1.array) && (objGamer2.array)) {
+    io.emit('Battle');
   }
 }
 
