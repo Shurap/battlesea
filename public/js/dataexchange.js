@@ -25,9 +25,13 @@ btnEnter.onclick = function () {
     changeBtnEnter('Wait opponent...', '#FF7F00');
     phaseGame = 'Wait opponent';
   }
-  //if ((phaseGame === 'Battle') && (this.id.slice(0, 1) === 'e')){
-  //  console.log(arrayEnemyField);
-  //}
+  if (phaseGame === 'Battle'){
+    if (countElements('aim', arrayEnemyField) !== 0) {
+      socket.emit('shoot', adressElement(arrayEnemyField, 'aim'));
+    } else {
+      getTerminal('> Установите прицел!');
+    }
+  }
 }
 
 function connectAndListenServer() {
@@ -106,9 +110,8 @@ function clickOnButtonField() {
     }
   }
   if ((phaseGame === 'Battle') && (this.id.slice(0, 1) === 'e')) {
-
     if (arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content !== 'aim') {
-      console.log('1');
+      //-------------------------------------------------------
       arrayEnemyField.forEach(function (item) {
         item.forEach(function (elem) {
           if (elem.content === 'aim') {
@@ -116,9 +119,8 @@ function clickOnButtonField() {
           }
         });
       });
+      //-----------------------------------------------------
     }
-
-    //console.log('before ', arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content);
     if (arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content === 'empty'){
       arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content = 'aim';
     } else if (arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content === 'aim') {
@@ -128,10 +130,6 @@ function clickOnButtonField() {
     }else if (arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content === 'put') {
       arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content = 'empty';
     }
-    //console.log('after ', arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content);
-
-
-    //arrayEnemyField [this.id.slice(1, 2)][this.id.slice(2)].content = 'aim';
   }
   setPictureOnButtonField();
 }
@@ -189,13 +187,58 @@ function countElements(whatCount, whereCount) {
   }, 0);
 }
 
-function beginBattle() {
-  changeBtnEnter('Shot!', '#00BB3F');
+function beginBattle(data) {
+  if (data === 'turn') {
+    changeBtnEnter('Shot!', '#00BB3F');
+  }
+  if (data === 'wait') {
+    changeBtnEnter('Wait opponent...', '#FF7F00');
+  }
   document.getElementById('enemy').style.display = "block";
-//  createBtnField('enemy');
   getTerminal('>Установи прицел и нажми выстрел!');
   phaseGame = 'Battle';
 }
+
+//------------------------------------------------------------------------------------
+function adressElement(where, what) {
+
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      if (where[i][j].content === what) {
+        //console.log(where[i][j].id.slice(1));
+        return where[i][j].id.slice(1);
+      }
+    }
+  }
+}
+
+  // map -------------------------------------------------------
+
+/*  where.filter(function(item) {
+
+    let mas = item.filter(function(elem){
+      return elem.content === what;
+    });
+    console.log('a1 = ', mas);
+    return mas.content;
+
+  });*/
+/*-----------------------------------------------------------
+  console.log('1');
+  where.forEach(function (item) {
+
+    item.forEach(function (elem) {
+      if (elem.content === what) {
+        console.log('3 ', elem.id);
+        return elem.id;
+      }
+    });
+  });
+}
+----------------------------------------------------------*/
+//------------------------------------------------------------------------------------
+
+
 
 
 /*

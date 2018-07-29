@@ -66,11 +66,14 @@ function servBeginGame(data) {
     io.sockets.connected[objGamer1.id].emit('terminal', 'server> игрок ' + objGamer2.name + ' готов к бою!');
   }
   if ((objGamer1.array) && (objGamer2.array)) {
-    io.emit('Battle');
+    //io.emit('Battle');
+    io.sockets.connected[objGamer1.id].emit('Battle', 'turn');
+    io.sockets.connected[objGamer2.id].emit('Battle', 'wait');
   }
 }
 
 function servSelectClient(data) {
+  console.log('1', data);
   let result;
   let gamerTarget = (this.id === objGamer1.id) ? objGamer2 : objGamer1;
   let gamerShooter = (this.id === objGamer1.id) ? objGamer1 : objGamer2;
@@ -85,6 +88,7 @@ function servSelectClient(data) {
 }
 
 function defineResultShot(data, target) {
+  console.log('proc');
   let coordX = data.substr(0, 1);
   let coordY = data.substr(1, 1);
 
@@ -101,7 +105,7 @@ function defineResultShot(data, target) {
             coord : data,
             setOnField : ''};
   }
-  if (target[coordX][coordY].content === 'zero') {
+  if (target[coordX][coordY].content === 'empty') {
     return {inTarget : 'fail',
       countShips : countShips.numberShips(coordX, coordY, target),
       coord : data,
