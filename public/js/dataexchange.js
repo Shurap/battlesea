@@ -240,7 +240,6 @@ function beginBattle(data) {
   phaseGame = 'Battle';
 }
 
-//------------------------------------------------------------------------------------
 function adressElement(where, what) {
 
   for (let i = 0; i < 10; i++) {
@@ -274,7 +273,6 @@ function adressElement(where, what) {
   });
 }
 ----------------------------------------------------------*/
-//------------------------------------------------------------------------------------
 }
 
 function resultOfShot(data) {
