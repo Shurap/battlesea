@@ -1,7 +1,13 @@
+const ORANGE = '#FF7F00';
+const GREEN = '#00BB3F';
 let socket;
 let phaseGame = 'Create game';
 let arrayHomeField = create2DArray(10, 10);
 let arrayEnemyField = create2DArray(10, 10);
+
+bt.onclick = function() {
+  socket.emit('request');
+}
 
 function create2DArray(rows, columns) {
   let x = new Array(rows);
@@ -17,7 +23,7 @@ btnEnter.onclick = function () {
   }
   if ((phaseGame === 'Set on home field') && (countElements('ship', arrayHomeField) === 5)) {
     socket.emit('field', arrayHomeField);
-    changeBtnEnter('Wait opponent...', '#FF7F00');
+    changeBtnEnter('Wait opponent...', ORANGE);
     phaseGame = 'Wait opponent';
   }
   if ((phaseGame === 'Battle') && (document.getElementById('btnEnter').value === 'Shot!')){
@@ -27,6 +33,9 @@ btnEnter.onclick = function () {
       getTerminal('> Установите прицел!');
     }
   }
+  if (phaseGame === 'Game over') {
+    location.reload(true);
+  }
 }
 
 function connectAndListenServer() {
@@ -34,14 +43,21 @@ function connectAndListenServer() {
   socket.on('connClient', createGame);
   socket.on('terminal', getTerminal);
   socket.on('beginGame', beginGame);
-  socket.on('Battle', beginBattle);
+  socket.on('battle', beginBattle);
   socket.on('checkShot', resultOfShot);
+  socket.on('dis', disconnect);
+}
+
+function disconnect() {
+  changeBtnEnter('Opponent disconnect. Game over. Press to start over!', ORANGE);
+  socket.disconnect();
+  phaseGame = 'Game over';
 }
 
 function createGame() {
   document.getElementById('userName').style.display = "none";
   document.getElementById('gameName').style.display = "none";
-  changeBtnEnter('Wait opponent...', '#FF7F00');
+  changeBtnEnter('Wait opponent...', ORANGE);
   phaseGame = 'wait opponent';
   this.emit('name', {name : userName.value, game : gameName.value});
 }
@@ -99,9 +115,9 @@ function clickOnButtonField() {
     } else {
       arrayHomeField [this.id.slice(1, 2)][this.id.slice(2)].content = 'empty';
     }
-    changeBtnEnter('Set ' + (5 - countElements('ship', arrayHomeField)) + ' ships', '#FF7F00');
+    changeBtnEnter('Set ' + (5 - countElements('ship', arrayHomeField)) + ' ships', ORANGE);
     if (5 - countElements('ship', arrayHomeField) === 0) {
-      changeBtnEnter('Begin battle!!!', '#00BB3F');
+      changeBtnEnter('Begin battle!!!', GREEN);
     }
   }
   if ((phaseGame === 'Battle') && (this.id.slice(0, 1) === 'e')) {
@@ -230,10 +246,10 @@ function countElements(whatCount, whereCount) {
 
 function beginBattle(data) {
   if (data === 'turn') {
-    changeBtnEnter('Shot!', '#00BB3F');
+    changeBtnEnter('Shot!', GREEN);
   }
   if (data === 'wait') {
-    changeBtnEnter('Wait opponent...', '#FF7F00');
+    changeBtnEnter('Wait opponent...', ORANGE);
   }
   document.getElementById('enemy').style.display = "block";
   getTerminal('>Установи прицел и нажми выстрел!');
@@ -249,40 +265,16 @@ function adressElement(where, what) {
       }
     }
   }
-  // map -------------------------------------------------------
-
-/*  where.filter(function(item) {
-
-    let mas = item.filter(function(elem){
-      return elem.content === what;
-    });
-    console.log('a1 = ', mas);
-    return mas.content;
-
-  });*/
-/*-----------------------------------------------------------
-  console.log('1');
-  where.forEach(function (item) {
-
-    item.forEach(function (elem) {
-      if (elem.content === what) {
-        console.log('3 ', elem.id);
-        return elem.id;
-      }
-    });
-  });
-}
-----------------------------------------------------------*/
 }
 
 function resultOfShot(data) {
   let arrayWork = (data.setOnField === 'e') ? arrayEnemyField : arrayHomeField;
 
   if (data.setOnField === 'h') {
-    changeBtnEnter('Shot!', '#00BB3F');
+    changeBtnEnter('Shot!', GREEN);
   }
   if (data.setOnField === 'e') {
-    changeBtnEnter('Wait opponent...', '#FF7F00');
+    changeBtnEnter('Wait opponent...', ORANGE);
   }
   if ((data.inTarget === 'hit') || (data.inTarget === 'win')) {
     arrayWork [data.coord.slice(0, 1)][data.coord.slice(1)].content = 'wreck';
