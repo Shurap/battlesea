@@ -1,7 +1,46 @@
 body {
   background-color: black;
 }
-.cr {
+
+#container {
+  display: flex;
+  flex-direction: column;
+  min-width: 490px;
+  background-color: blue;
+  outline: 1px solid #787274;
+  padding: 10px;
+}
+
+#top {
+  display: flex;
+  flex-direction: column;
+  background-color: green;
+  padding: 5px;
+}
+
+#middle {
+  background-color: yellow;
+}
+
+#down {
+  background-color: red;
+}
+
+#terminal {
+  background-color: black;
+  color: #5CCCCC;
+  height: 60px;
+}
+
+.top {
+  width: 50%;
+  align-self: center;
+  min-width: 434px;
+  margin: 5px;
+}
+
+
+/*.cr {
 
 
   min-width: 490px;
@@ -45,7 +84,6 @@ body {
 
 .en {
   background-image: url("../img/map.jpg");
-  /*background: #5CCCCC;*/
   height: 440px;
   width: 440px;
   display: none;
@@ -100,7 +138,6 @@ body {
 }
 
 #userName {
-  /*width: 434px;*/
   height: 40px;
   background-color: black;
   color: #5CCCCC;
@@ -109,10 +146,9 @@ body {
 }
 
 #gameName {
-  /*width: 434px;*/
   height: 40px;
   background-color: black;
   color: #5CCCCC;
   border: 1px white solid;
   margin: 5px;
-}
+}*/
