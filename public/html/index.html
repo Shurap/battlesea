@@ -9,21 +9,19 @@
 <body>
     <div id="container" class="cr">
         <div id="top" class="tp" >
-            <textarea id="terminal" class="tr" readonly>> Введите имя и название новой или созданной другим игроком игры.</textarea>
-            <input id="btnEnter" type="button" class="ent" value="Create game or connect to created game"/>
+            <textarea id="terminal" class="top" readonly>> Введите имя и название новой или созданной другим игроком игры.</textarea>
+            <input id="btnEnter" type="button" class="top" value="Create game or connect to created game"/>
         </div>
         <div id="middle" class="ml">
             <div id="start" class="st">
-                <input id="userName" type="text" value=" Имя" />
-                <input id="gameName" type="text" value=" Название игры" />
+                <input id="userName" type="text" class="name" value=" Имя" />
+                <input id="gameName" type="text" class="name" value=" Название игры" />
                 <!--<input id="btnNewGame" type="button" value="Новая игра / Присоединиться" />-->
             </div>
-            <div id="home" class="hm"></div>
-            <div id="enemy" class="en"></div>
+            <div id="home" class="field"></div>
+            <div id="enemy" class="field"></div>
         </div>
-      <div id="down" class="dn">
-          <input id="bt" type="button" value="Кнопка"/>
-      </div>
+      <div id="down" class="dn"></div>
     </div>
   <script src="/socket.io/socket.io.js"></script>
   <script src = "../js/dataexchange.js"></script>

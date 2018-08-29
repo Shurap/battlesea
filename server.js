@@ -21,7 +21,6 @@ io.on('connection', function (socket) {
   socket.on('field', getClientArray);
   socket.on('shoot', selectClient);
   socket.on('disconnect', disconnectClient);
-  socket.on('request', () => console.log(allClients));
 });
 
 function disconnectClient(){

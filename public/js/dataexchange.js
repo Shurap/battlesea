@@ -5,10 +5,6 @@ let phaseGame = 'Create game';
 let arrayHomeField = create2DArray(10, 10);
 let arrayEnemyField = create2DArray(10, 10);
 
-bt.onclick = function() {
-  socket.emit('request');
-}
-
 function create2DArray(rows, columns) {
   let x = new Array(rows);
   for (let i = 0; i < rows; i++) {
