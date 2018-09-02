@@ -6,7 +6,7 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 490px;
-  background-color: blue;
+  background-color: black;
   outline: 1px solid #787274;
   padding: 5px;
 }
@@ -14,7 +14,7 @@ body {
 #top {
   display: flex;
   flex-direction: column;
-  background-color: green;
+  background-color: #015467;
   padding: 5px;
   margin: 5px;
 }
@@ -23,6 +23,8 @@ body {
   background-color: black;
   color: #5CCCCC;
   height: 60px;
+  resize: none;
+
 }
 
 #btnEnter {
@@ -38,12 +40,12 @@ body {
 }
 /*-------------------------------------------*/
 #middle {
-  background-color: yellow;
   display: flex;
-  flex-direction: column;
-  /*flex-wrap: nowrap;*/
+  flex-wrap: wrap;
+  justify-content:center;
+  background-color: #05819E;
   margin: 5px;
-  padding: 10px;
+  padding: 5px;
 }
 
 #start {
@@ -68,12 +70,18 @@ body {
 
 .field {
   display: none;
-  align-self: center;
   background-image: url("../img/map.jpg");
   height: 440px;
   width: 440px;
-  border: 2px #00BB3F solid;
   margin: 5px;
+}
+
+#home {
+  border: 2px #00BB3F solid;
+}
+
+#enemy {
+  border: 2px #FF7F00 solid;
 }
 
 .btn {
@@ -91,122 +99,8 @@ body {
 
 
 #down {
-  background-color: red;
+  background-color: #015467;
   height: 80px;
   padding: 10px;
   margin: 5px;
 }
-
-
-/*.cr {
-
-
-  min-width: 490px;
-  outline: 1px solid #787274;
-  padding: 10px;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.ml {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  background: #05819E;
-  padding: 10px;
-  margin: 10px 0px;
-}
-
-.st {
-  background-image: url("../img/map.jpg");
-  height: 440px;
-  width: 440px;
-  border: 2px #5CCCCC solid;
-  display: grid;
-  justify-content: center;
-  align-content: center;
-  margin: 5px;
-}
-
-.hm {
-  background-image: url("../img/map.jpg");
-  height: 440px;
-  width: 440px;
-  display: none;
-  text-align: center;
-  border: 2px #00BB3F solid;
-  margin: 5px;
-}
-
-.en {
-  background-image: url("../img/map.jpg");
-  height: 440px;
-  width: 440px;
-  display: none;
-  text-align: center;
-  border: 2px #FF7F00 solid;
-  margin: 5px;
-}
-
-.tp {
-  padding: 5px;
-  background: #015467;
-  margin: 0 auto;
-  display: grid;
-  justify-content: center;
-  align-content: center;
-}
-
-.tr {
-  width: 434px;
-  height: 60px;
-  max-width: 600px;
-  background-color: black;
-  color: #5CCCCC;
-  border: 1px white solid;
-  margin: 5px;
-}
-
-.ent {
-  width: 440px;
-  max-width: 600px;
-  height: 40px;
-  border: 1px white solid;
-  margin: 5px;
-}
-
-.dn {
-  height: 80px;
-  padding: 5px;
-  background: #015467;
-}
-
-.btn {
-  font-size: 30px;
-  font-weight: bold;
-  opacity: 1.0;
-  border: 2px solid black;
-  float: left;
-  height: 40px;
-  width: 40px;
-  text-align: center;
-  line-height: 35px;
-}
-
-#userName {
-  height: 40px;
-  background-color: black;
-  color: #5CCCCC;
-  border: 1px white solid;
-  margin: 5px;
-}
-
-#gameName {
-  height: 40px;
-  background-color: black;
-  color: #5CCCCC;
-  border: 1px white solid;
-  margin: 5px;
-}*/
