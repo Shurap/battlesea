@@ -15,7 +15,11 @@ function create2DArray(rows, columns) {
 
 btnEnter.onclick = function () {
   if (phaseGame === 'Create game') {
-    connectAndListenServer();
+    if (/[a-zA-Zа-яА-я]/.test(document.getElementById('gameName').value) === false) {
+      alert('Название игры должно содержать хотя-бы одну букву!');
+    } else {
+      connectAndListenServer();
+    }
   }
   if ((phaseGame === 'Set on home field') && (countElements('ship', arrayHomeField) === 5)) {
     socket.emit('field', arrayHomeField);

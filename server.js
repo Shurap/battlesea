@@ -71,6 +71,7 @@ function getClientArray(data) {
       item['array'] = data;
     }
   });
+  console.log('111  -  ', setClient(Object.keys(this.rooms)[1], 'lobby')[0]);//----------------------------------------------------
   if ((setClient(Object.keys(this.rooms)[1], 'lobby')[0].array) && (setClient(Object.keys(this.rooms)[1], 'lobby')[1].array)) {
     io.sockets.connected[setClient(Object.keys(this.rooms)[1], 'lobby')[0].id].emit('battle', 'turn');
     io.sockets.connected[setClient(Object.keys(this.rooms)[1], 'lobby')[1].id].emit('battle', 'wait');
