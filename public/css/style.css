@@ -68,6 +68,10 @@ body {
   margin: 5px;
 }
 
+h5{
+  align-self: center;
+ }
+
 .field {
   display: none;
   background-image: url("../img/map.jpg");

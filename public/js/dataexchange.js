@@ -16,7 +16,7 @@ function create2DArray(rows, columns) {
 btnEnter.onclick = function () {
   if (phaseGame === 'Create game') {
     if (/[a-zA-Zа-яА-я]/.test(document.getElementById('gameName').value) === false) {
-      alert('Название игры должно содержать хотя-бы одну букву!');
+      alert('Название игры должно содержать хотя бы одну букву!');
     } else {
       connectAndListenServer();
     }
