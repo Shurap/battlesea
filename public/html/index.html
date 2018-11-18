@@ -7,24 +7,70 @@
 </head>
 
 <body>
-    <div id="container" class="cr">
-        <div id="top" class="tp" >
-            <textarea id="terminal" class="top" readonly>> Введите имя и название новой или созданной другим игроком игры.</textarea>
-            <input id="btnEnter" type="button" class="top" value="Create game or connect to created game"/>
-        </div>
-        <div id="middle" class="ml">
-            <div id="start" class="st">
-                <input id="userName" type="text" class="name" value=" Имя" />
-                <input id="gameName" type="text" class="name" value=" Название игры" />
-                <h5>В названии игры должна быть хотя бы одна буква</h5>
-            </div>
-            <div id="home" class="field"></div>
-            <div id="enemy" class="field"></div>
-        </div>
-        <div id="down" class="dn"></div>
+  <div id="container" class="cr">
+    <div id="top" class="tp">
+        <textarea id="terminal" class="top"
+                  readonly>> Введите имя и название новой или созданной другим игроком игры.</textarea>
+        <input id="btnEnter" type="button" class="top" value="Create game or connect to created game"/>
     </div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src = "../js/dataexchange.js"></script>
+    <div id="middle" class="ml">
+        <div id="start" class="st">
+            <input id="userName" type="text" class="name" value=" Имя"/>
+            <input id="gameName" type="text" class="name" value=" Название игры"/>
+            <h5>В названии игры должна быть хотя бы одна буква</h5>
+        </div>
+        <div id="home" class="field"></div>
+        <div id="enemy" class="field"></div>
+    </div>
+    <div id="down" class="dn">
+        <input id="btnHelp" type="button" value="Help"/>
+    </div>
+  </div>
+
+  <div id="help">
+    <div id="shadow"></div>
+    <div id="modal">
+        <h4>
+            Чтобы создать игру введите имя пользователя и название игры и нажмите "Create game or connect to created
+            game"
+        </h4>
+        <h4>
+            Чтобы присоединиться к уже созданной игре введите имя и название уже созданной игры и нажмите "Create game
+            or connect to created game"
+        </h4>
+        <h4>
+            Расставьте 5 кораблей и нажмите "Begin battle!!!". Дождитесь пока соперник расставит корабли...
+        </h4>
+        <h4>
+            Если кнопка оранжевая с надписью "Wait opponent..." ждите. Ходит соперник.
+        </h4>
+        <h4>
+            Если кнопка зеленая с надписью "Shot!" - ваш ход.
+        </h4>
+        <h4>
+            Установите прицел и нажмите кнопку "Shot".
+        </h4>
+        <h4>
+            Если выстрел мимо, появляется цифра, которая показывает сколько кораблей противника находится на
+            ветикальной, горизонтальной и диагональных линиях, проходящих через клетку выстрела.
+        </h4>
+        <h4>    
+            Если попали в корабль, то появляется цифра, которая показывает сколько кораблей противника находится на
+            ветикальной, горизонтальной и диагональных линиях, проходящих через клетку выстрела, включая корабль, в
+            который попали.
+        </h4>
+        <h4>
+            Игроки ходят поочереди.
+            Задача убить 5 кораблей противника.
+        </h4>
+        <h4>
+            Если несколько раз нажимать на одну клетку, то чередуются: прицел-крест-бомба-пусто. Крест и бомба - это
+            просто пометки для себя.
+        </h4>
+    </div>
+  </div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="../js/dataexchange.js"></script>
 </body>
 
 </html>

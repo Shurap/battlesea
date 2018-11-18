@@ -10,7 +10,7 @@ body {
   outline: 1px solid #787274;
   padding: 5px;
 }
-/*-------------------------------------*/
+
 #top {
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@ body {
   margin: 5px;
   border: 1px white solid;
 }
-/*-------------------------------------------*/
+
 #middle {
   display: flex;
   flex-wrap: wrap;
@@ -99,12 +99,50 @@ h5{
   text-align: center;
   line-height: 35px;
 }
-/*-------------------------------------------*/
-
 
 #down {
   background-color: #015467;
   height: 80px;
   padding: 10px;
   margin: 5px;
+}
+
+
+#help {
+  display: none;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 100;
+}
+
+#shadow {
+  display: none;
+  position: fixed;
+  margin: auto;
+
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 101;
+  background: silver;
+  opacity: 0.5;
+}
+
+#modal {
+  display: none;
+  z-index: 102;
+  background-color: #05819E;
+  /*height: 480px;*/
+  width: 640px;
+  padding: 10px;
+
+  outline: 10px double #787274;
 }

@@ -13,7 +13,7 @@ function create2DArray(rows, columns) {
   return x;
 }
 
-btnEnter.onclick = function () {
+btnEnter.onclick = function() {
   if (phaseGame === 'Create game') {
     if (/[a-zA-Zа-яА-я]/.test(document.getElementById('gameName').value) === false) {
       alert('Название игры должно содержать хотя бы одну букву!');
@@ -36,6 +36,24 @@ btnEnter.onclick = function () {
   if (phaseGame === 'Game over') {
     location.reload(true);
   }
+}
+
+btnHelp.onclick = function() {
+  document.getElementById('help').style.display = "flex";
+  document.getElementById('shadow').style.display = "block";
+  document.getElementById('modal').style.display = "block";
+}
+
+shadow.onclick = function() {
+  document.getElementById('help').style.display = "none";
+  document.getElementById('shadow').style.display = "none";
+  document.getElementById('modal').style.display = "none";
+}
+
+modal.onclick = function() {
+  document.getElementById('help').style.display = "none";
+  document.getElementById('shadow').style.display = "none";
+  document.getElementById('modal').style.display = "none";
 }
 
 function connectAndListenServer() {
@@ -268,6 +286,7 @@ function adressElement(where, what) {
 }
 
 function resultOfShot(data) {
+  console.log(data);//------------------------------------------------------------------
   let arrayWork = (data.setOnField === 'e') ? arrayEnemyField : arrayHomeField;
 
   if (data.setOnField === 'h') {
@@ -285,6 +304,6 @@ function resultOfShot(data) {
     arrayWork [data.coord.slice(0, 1)][data.coord.slice(1)].count = data.countShips;
   }
   setPictureOnButtonField();
-  if ((data.setOnField === 'e') && (data.inTarget === 'win')) alert ('WIN!!!');
-  if ((data.setOnField === 'h') && (data.inTarget === 'win')) alert ('LOST...');
+  if ((data.setOnField === 'e') && (data.inTarget === 'win')) alert ('YOU WIN!!!');
+  if ((data.setOnField === 'h') && (data.inTarget === 'win')) alert ('YOU LOST...');
 }
